@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Challenge Cabinets — Workshop Checklists</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sb-bg:      #3D3D3D;
+  --sb-dark:    #2E2E2E;
+  --sb-border:  rgba(255,255,255,.07);
+  --sb-text:    rgba(255,255,255,.52);
+  --sb-hover:   rgba(255,255,255,.07);
+  --sb-active:  rgba(200,48,42,.18);
+  --bg:         #EFEEEC;
+  --white:      #FFFFFF;
+  --border:     #DDDBD7;
+  --border-dk:  #B8B4AE;
+  --text:       #1A1918;
+  --text-2:     #4A4845;
+  --text-3:     #7A7875;
+  --red:        #C8302A;
+  --red-dk:     #A02020;
+  --red-lt:     #FDF1F0;
+  --red-mid:    #F0C4C2;
+  --done-bg:    #EEF5EE;
+  --done-txt:   #2A6A2A;
+  --done-bdr:   #80C080;
+  --no-bg:      #FEF3F2;
+  --no-txt:     #962020;
+  --no-bdr:     #E09090;
+  --na-bg:      #F4F4F2;
+  --na-txt:     #686560;
+  --na-bdr:     #C0BCAA;
+  --arch-bg:    #F5F3EE;
+  --arch-bdr:   #C8B89A;
+  --arch-txt:   #6A5A3A;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:15px;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:252px;min-width:252px;background:var(--sb-bg);display:flex;flex-direction:column;overflow:hidden;border-right:3px solid var(--red);}
+.brand{padding:20px 18px 16px;border-bottom:1px solid var(--sb-border);flex-shrink:0;background:var(--sb-dark);}
+.brand-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#fff;line-height:1.15;}
+.brand-name em{color:var(--red);font-style:normal;}
+.brand-tag{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-top:4px;}
+
+.cl-switcher{display:flex;flex-shrink:0;border-bottom:1px solid var(--sb-border);}
+.cl-tab{flex:1;padding:11px 6px;border:none;background:none;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:var(--sb-text);cursor:pointer;transition:all .15s;border-bottom:3px solid transparent;letter-spacing:.2px;}
+.cl-tab:hover{color:#fff;background:var(--sb-hover);}
+.cl-tab.active{color:#fff;background:rgba(200,48,42,.15);border-bottom-color:var(--red);}
+
+.nav{padding:12px 10px 8px;flex-shrink:0;border-bottom:1px solid var(--sb-border);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:7px;cursor:pointer;font-size:14px;font-weight:500;color:var(--sb-text);transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:'Inter',sans-serif;margin-bottom:2px;}
+.nav-item .ico{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+.nav-item:hover{color:#fff;background:var(--sb-hover);}
+.nav-item.active{color:#fff;background:var(--sb-active);font-weight:700;border-left:3px solid var(--red);padding-left:9px;}
+.notif-pill{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.arch-pill{margin-left:auto;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+
+.sb-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.26);padding:12px 14px 5px;flex-shrink:0;}
+.proj-list{flex:1;overflow-y:auto;padding:4px 10px;}
+
+/* Project card in sidebar */
+.proj-item{padding:10px 11px;border-radius:7px;cursor:pointer;border:1px solid transparent;transition:all .15s;margin-bottom:4px;position:relative;}
+.proj-item:hover{background:var(--sb-hover);border-color:rgba(255,255,255,.1);}
+.proj-item:hover .proj-actions{opacity:1;}
+.proj-item.active{background:var(--sb-active);border-color:rgba(200,48,42,.4);border-left:3px solid var(--red);padding-left:8px;}
+.proj-item-name{font-size:13px;font-weight:600;color:rgba(255,255,255,.88);padding-right:52px;}
+.proj-item-sub{font-size:10.5px;color:rgba(255,255,255,.36);margin-top:3px;}
+.proj-bar{height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin-top:7px;overflow:hidden;}
+.proj-bar-fill{height:100%;background:var(--red);border-radius:2px;transition:width .4s;}
+
+/* Archive / Delete action buttons on sidebar items */
+.proj-actions{position:absolute;top:8px;right:8px;display:flex;gap:3px;opacity:0;transition:opacity .15s;}
+.proj-act-btn{width:22px;height:22px;border-radius:4px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .12s;}
+.btn-arch-sm{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);}
+.btn-arch-sm:hover{background:rgba(200,160,60,.3);color:#F0C870;}
+.btn-del-sm{background:rgba(255,255,255,.08);color:rgba(255,100,80,.5);}
+.btn-del-sm:hover{background:rgba(200,48,42,.4);color:#fff;}
+
+.add-proj-btn{margin:6px 10px 14px;padding:10px 14px;border:1.5px dashed rgba(200,48,42,.35);border-radius:7px;background:none;color:rgba(200,48,42,.6);font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;width:calc(100% - 20px);display:flex;align-items:center;gap:8px;font-weight:500;}
+.add-proj-btn:hover{border-color:var(--red);color:#fff;background:rgba(200,48,42,.14);}
+.proj-list::-webkit-scrollbar{width:3px;}
+.proj-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:2px;}
+
+/* ══ MAIN ══ */
+.main{flex:1;overflow-y:auto;background:var(--bg);}
+.view{display:none;}
+.view.active{display:block;}
+
+.page-header{background:var(--white);border-bottom:2px solid var(--border);padding:17px 28px 15px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 1px 5px rgba(0,0,0,.05);}
+.page-title{font-size:21px;font-weight:700;color:var(--text);}
+.page-sub{font-size:13px;color:var(--text-3);margin-top:3px;}
+.header-actions{display:flex;gap:8px;align-items:center;}
+
+.cl-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.cl-pill-cab{background:var(--red-lt);color:var(--red-dk);border:1px solid var(--red-mid);}
+.cl-pill-stone{background:#F0EDE8;color:#3D3D3D;border:1px solid #C8C4BC;}
+
+.btn{padding:9px 18px;border-radius:7px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:7px;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-red:hover{background:var(--red-dk);}
+.btn-ghost{background:#fff;color:var(--text-2);border:1.5px solid var(--border);}
+.btn-ghost:hover{border-color:var(--red);color:var(--red);}
+.btn-amber{background:#E8A820;color:#fff;}
+.btn-amber:hover{background:#C8900A;}
+.btn-danger{background:#fff;color:var(--red);border:1.5px solid var(--red-mid);}
+.btn-danger:hover{background:var(--red);color:#fff;}
+.btn-sm{padding:7px 14px;font-size:12.5px;}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:18px 28px 0;}
+.kpi-card{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:17px 20px;border-top:3px solid var(--red);}
+.kpi-label{font-size:10.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;}
+.kpi-value{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--text);line-height:1;letter-spacing:1px;}
+.kpi-note{font-size:12px;color:var(--text-3);margin-top:4px;}
+
+/* Banner */
+.project-banner{margin:14px 28px 0;background:var(--white);border:1.5px solid var(--border);border-left:4px solid var(--red);border-radius:10px;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.pb-name{font-size:18px;font-weight:700;color:var(--text);}
+.pb-meta{display:flex;gap:26px;margin-top:8px;flex-wrap:wrap;}
+.pb-key{font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px;}
+.pb-val{font-size:13.5px;color:var(--text-2);font-weight:500;}
+.pb-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex-shrink:0;}
+.pb-pct-num{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:1;color:var(--red);letter-spacing:1px;}
+.pb-pct-lbl{font-size:10px;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;text-align:right;}
+.pb-btn-row{display:flex;gap:7px;}
+
+.status{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.status::before{content:'';width:6px;height:6px;border-radius:50%;}
+.s-active{background:var(--done-bg);color:var(--done-txt);}
+.s-active::before{background:var(--done-txt);}
+
+/* ══ CHECKLIST ══ */
+.checklist-area{padding:14px 28px 40px;}
+.stage-block{margin-bottom:16px;border-radius:10px;overflow:hidden;border:1.5px solid var(--border);background:var(--white);box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.stage-hdr{display:flex;align-items:center;justify-content:space-between;padding:0 18px;cursor:pointer;user-select:none;min-height:44px;}
+.stage-hdr-left{display:flex;align-items:center;gap:10px;}
+.stage-hdr-emoji{font-size:16px;}
+.stage-hdr-name{font-size:15px;font-weight:700;color:#fff;}
+.stage-hdr-right{display:flex;align-items:center;gap:12px;}
+.stage-hdr-count{font-size:13px;font-weight:600;color:rgba(255,255,255,.7);}
+.stage-chevron{font-size:11px;color:rgba(255,255,255,.5);transition:transform .2s;}
+.stage-hdr.open .stage-chevron{transform:rotate(180deg);}
+.hdr-1{background:#C8302A;}.hdr-2{background:#8A2E28;}.hdr-3{background:#5C2222;}
+.hdr-4{background:#A03428;}.hdr-5{background:#703030;}
+
+.col-hdr{display:grid;grid-template-columns:128px 1fr 280px;background:#3D3D3D;padding:8px 18px;}
+.col-hdr-cell{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.9px;}
+.stage-body{display:none;}
+.stage-body.open{display:block;}
+
+.ci-row{display:grid;grid-template-columns:128px 1fr 280px;border-bottom:1px solid var(--border);min-height:47px;align-items:stretch;transition:background .1s;}
+.ci-row:last-child{border-bottom:none;}
+.ci-row:hover{background:#FAF8F6;}
+.ci-row.row-done{background:var(--done-bg);}
+.ci-status{border-right:1px solid var(--border);display:flex;align-items:center;padding:7px 11px;}
+.status-select{width:100%;padding:6px 8px;border-radius:5px;border:1.5px solid var(--border);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;outline:none;transition:border-color .15s;-webkit-appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") no-repeat right 7px center;padding-right:24px;}
+.status-select:focus{border-color:var(--red);box-shadow:0 0 0 2px rgba(200,48,42,.12);}
+.sel-done{background-color:var(--done-bg)!important;color:var(--done-txt)!important;border-color:var(--done-bdr)!important;}
+.sel-no{background-color:var(--no-bg)!important;color:var(--no-txt)!important;border-color:var(--no-bdr)!important;}
+.sel-na{background-color:var(--na-bg)!important;color:var(--na-txt)!important;border-color:var(--na-bdr)!important;}
+.ci-task{border-right:1px solid var(--border);display:flex;align-items:center;padding:10px 17px;}
+.ci-task-text{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.35;}
+.ci-row.row-done .ci-task-text{text-decoration:line-through;color:var(--text-3);}
+.ci-task-tag{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700;vertical-align:middle;}
+.tag-notify{background:#FDEAEA;color:var(--red-dk);border:1px solid var(--red-mid);}
+.tag-crit{background:#3D3D3D;color:#fff;border:1px solid #2A2A2A;}
+.ci-notes{display:flex;align-items:center;padding:7px 13px;gap:9px;}
+.notes-input{flex:1;border:none;background:transparent;font-family:'Inter',sans-serif;font-size:13.5px;color:var(--text-2);outline:none;padding:4px 0;}
+.notes-input::placeholder{color:var(--text-3);opacity:.5;}
+.notes-input:focus{border-bottom:1.5px solid var(--red);}
+.del-btn{width:26px;height:26px;border-radius:5px;border:1.5px solid var(--border);background:none;color:var(--text-3);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:all .12s;flex-shrink:0;}
+.ci-row:hover .del-btn{opacity:1;}
+.del-btn:hover{background:var(--red-lt);color:var(--red);border-color:var(--red-mid);}
+.stage-footer{padding:9px 18px;background:#F7F5F2;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;}
+.add-row-btn{padding:6px 13px;border:1.5px dashed var(--border-dk);border-radius:6px;background:none;color:var(--text-3);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.add-row-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-lt);}
+.stage-prog-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.stage-prog-fill{height:100%;background:var(--red);border-radius:3px;transition:width .4s;}
+.stage-prog-pct{font-size:12px;font-weight:700;color:var(--red);white-space:nowrap;min-width:34px;text-align:right;}
+
+/* ══ ARCHIVE LIBRARY ══ */
+.archive-page{padding:0 28px 40px;}
+
+/* Filter bar */
+.arch-filters{display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap;}
+.arch-filter-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:var(--text-2);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;}
+.arch-filter-btn:hover{border-color:var(--arch-bdr);color:var(--arch-txt);}
+.arch-filter-btn.active{background:var(--arch-bg);border-color:var(--arch-bdr);color:var(--arch-txt);font-weight:700;}
+.arch-search{flex:1;max-width:300px;padding:8px 14px;border:1.5px solid var(--border);border-radius:20px;font-family:'Inter',sans-serif;font-size:13px;outline:none;background:var(--white);color:var(--text);}
+.arch-search:focus{border-color:var(--arch-bdr);}
+.arch-count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-3);margin-left:auto;}
+
+/* Archive grid */
+.arch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+
+.arch-card{background:var(--white);border:1.5px solid var(--arch-bdr);border-radius:11px;overflow:hidden;transition:all .18s;opacity:.9;}
+.arch-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.1);opacity:1;transform:translateY(-2px);}
+.arch-card-top{padding:16px 18px 13px;border-bottom:1px solid var(--border);}
+.arch-card-badge{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:12px;font-size:10.5px;font-weight:700;margin-bottom:9px;}
+.arch-badge-cab{background:var(--red-lt);color:var(--red-dk);border:1px solid var(--red-mid);}
+.arch-badge-stone{background:#F0EDE8;color:#4A4540;border:1px solid #C8C4BC;}
+.arch-card-name{font-size:15px;font-weight:700;color:var(--text);line-height:1.3;}
+.arch-card-pm{font-size:12px;color:var(--text-3);margin-top:4px;}
+.arch-card-bottom{padding:12px 18px;background:var(--arch-bg);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.arch-meta{display:flex;gap:16px;}
+.arch-meta-item{text-align:center;}
+.arch-meta-k{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--arch-txt);opacity:.7;}
+.arch-meta-v{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--arch-txt);font-weight:600;margin-top:2px;}
+.arch-pct{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--arch-txt);line-height:1;}
+.arch-pct-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--arch-txt);opacity:.6;text-align:center;}
+.arch-notes{font-size:12px;color:var(--text-3);padding:10px 18px;border-top:1px solid var(--border);font-style:italic;line-height:1.5;}
+.arch-card-actions{display:flex;gap:7px;padding:10px 18px;border-top:1px solid var(--border);background:var(--white);}
+.arch-restore-btn{flex:1;padding:8px 12px;border-radius:6px;border:1.5px solid var(--arch-bdr);background:none;color:var(--arch-txt);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.arch-restore-btn:hover{background:var(--arch-bg);border-color:#A09060;}
+.arch-del-btn{padding:8px 12px;border-radius:6px;border:1.5px solid var(--red-mid);background:none;color:var(--red-dk);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.arch-del-btn:hover{background:var(--red);color:#fff;border-color:var(--red);}
+
+/* Empty state */
+.empty-state{padding:60px 0;text-align:center;color:var(--text-3);}
+.empty-state-ico{font-size:48px;margin-bottom:14px;opacity:.4;}
+.empty-state-txt{font-size:15px;font-weight:500;}
+.empty-state-sub{font-size:13px;margin-top:6px;opacity:.7;}
+
+/* ══ NOTIFICATIONS ══ */
+.notif-page{padding:0 28px 40px;}
+.notif-grid{display:grid;grid-template-columns:1fr 410px;gap:20px;}
+.notif-card{background:var(--white);border:1.5px solid var(--border);border-radius:9px;padding:14px 17px;display:flex;align-items:flex-start;gap:13px;margin-bottom:10px;transition:border-color .15s;}
+.notif-card:hover{border-color:var(--border-dk);}
+.notif-ico{width:37px;height:37px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.ico-sent{background:var(--done-bg);}.ico-pending{background:#FDF5EA;}.ico-failed{background:var(--red-lt);}
+.notif-title{font-size:14px;font-weight:700;color:var(--text);}
+.notif-detail{font-size:12px;color:var(--text-3);margin-top:3px;}
+.notif-time{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--border-dk);margin-top:5px;}
+.notif-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;align-self:flex-start;}
+.nb-sent{background:var(--done-bg);color:var(--done-txt);}
+.nb-pending{background:#FDF5EA;color:#8A5A10;}
+.nb-failed{background:var(--red-lt);color:var(--red-dk);}
+.right-panel-section{margin-bottom:18px;}
+.rps-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text-3);margin-bottom:10px;}
+.recip-card{background:var(--white);border:1.5px solid var(--border);border-radius:10px;overflow:hidden;}
+.recip-hdr{background:#3D3D3D;padding:11px 16px;font-size:10.5px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;}
+.recip-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);}
+.recip-row:last-child{border-bottom:none;}
+.recip-avatar{width:36px;height:36px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;}
+.recip-name{font-size:14px;font-weight:600;color:var(--text);}
+.recip-email{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text-3);margin-top:2px;}
+.recip-badge{margin-left:auto;font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;background:var(--red-lt);color:var(--red-dk);border:1px solid var(--red-mid);}
+.trigger-panel{background:var(--white);border:1.5px solid var(--border);border-radius:10px;overflow:hidden;}
+.trig-hdr-bar{background:#3D3D3D;padding:11px 16px;font-size:10.5px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;}
+.trig-row{display:flex;align-items:flex-start;gap:13px;padding:13px 16px;border-bottom:1px solid var(--border);}
+.trig-row:last-child{border-bottom:none;}
+.trig-body{flex:1;}
+.trig-lbl{font-size:13.5px;font-weight:500;color:var(--text);}
+.trig-who{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;}
+.trig-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;}
+.tt-matt{background:var(--red-lt);color:var(--red-dk);border:1px solid var(--red-mid);}
+.tt-arron{background:#F0EDE8;color:#3D3D3D;border:1px solid #C8C4BC;}
+.tt-reece{background:#EEF5EE;color:#2A6A2A;border:1px solid #80C080;}
+.toggle{width:40px;height:22px;border-radius:11px;background:var(--border);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;margin-top:2px;}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle.on{background:var(--red);}
+.toggle.on::after{left:21px;}
+
+/* ══ CONFIRM MODAL ══ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.44);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.overlay.open{display:flex;}
+.modal{background:var(--white);border:1.5px solid var(--border);border-top:4px solid var(--red);border-radius:12px;padding:28px;width:480px;max-width:92vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.16);}
+.modal-title{font-size:19px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.modal-sub{font-size:13.5px;color:var(--text-3);margin-bottom:20px;line-height:1.5;}
+.fg{margin-bottom:14px;}
+.fl{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text-3);margin-bottom:5px;}
+.fi,.fs,.fta{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:10px 13px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--red);background:#fff;box-shadow:0 0 0 3px rgba(200,48,42,.1);}
+.fta{resize:vertical;min-height:80px;}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-acts{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:15px;border-top:1.5px solid var(--border);}
+
+/* Confirm dialog style */
+.modal-danger{border-top-color:var(--red);}
+.confirm-icon{font-size:36px;margin-bottom:14px;}
+
+/* ══ TOAST ══ */
+.toast-zone{position:fixed;bottom:24px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:8px;}
+.toast{background:#2E2E2E;border-left:3px solid var(--red);border-radius:9px;padding:12px 17px;display:flex;align-items:center;gap:10px;font-size:13.5px;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.2);animation:tIn .2s ease;max-width:340px;}
+@keyframes tIn{from{transform:translateX(110%);opacity:0}to{transform:none;opacity:1}}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--border-dk);}
+</style>
+</head>
+<body>
+
+<!-- ══════ SIDEBAR ══════ -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-name">Challenge<br><em>Cabinets</em></div>
+    <div class="brand-tag">Workshop Checklist System</div>
+  </div>
+
+  <div class="cl-switcher">
+    <button class="cl-tab active" id="tab-cab" onclick="switchChecklist('cab')">🪚 Cabinet</button>
+    <button class="cl-tab" id="tab-stone" onclick="switchChecklist('stone')">🪨 Stone</button>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-item active" id="nav-checklist" onclick="showView('checklist')">
+      <span class="ico">☰</span> Checklist
+    </button>
+    <button class="nav-item" id="nav-archive" onclick="showView('archive')">
+      <span class="ico">🗂</span> Archive
+      <span class="arch-pill" id="archBadge">0</span>
+    </button>
+    <button class="nav-item" id="nav-notifications" onclick="showView('notifications')">
+      <span class="ico">✉</span> Notifications
+      <span class="notif-pill" id="notifBadge">2</span>
+    </button>
+  </nav>
+
+  <div class="sb-lbl" id="projSectionLbl">Cabinet Projects</div>
+  <div class="proj-list" id="projList"></div>
+  <button class="add-proj-btn" onclick="openOv('ov-newProj')">＋ New Project</button>
+</aside>
+
+<!-- ══════ MAIN ══════ -->
+<main class="main">
+
+  <!-- CHECKLIST VIEW -->
+  <div class="view active" id="view-checklist">
+    <div class="page-header">
+      <div>
+        <div class="page-title" id="pageTitle">Cabinet Checklist</div>
+        <div class="page-sub" id="dashDate"></div>
+      </div>
+      <div class="header-actions">
+        <span class="cl-pill cl-pill-cab" id="clPill">🪚 Cabinet</span>
+        <button class="btn btn-ghost btn-sm" onclick="openOv('ov-newProj')">+ New Project</button>
+        <button class="btn btn-red btn-sm" onclick="openOv('ov-sendEmail')">📧 Send Update</button>
+      </div>
+    </div>
+    <div class="kpi-row" id="kpiRow"></div>
+    <div class="project-banner" id="projBanner"></div>
+    <div class="checklist-area" id="stageArea"></div>
+  </div>
+
+  <!-- ARCHIVE VIEW -->
+  <div class="view" id="view-archive">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Archive Library</div>
+        <div class="page-sub">Completed and archived projects — Cabinet &amp; Stone</div>
+      </div>
+    </div>
+    <div class="archive-page">
+      <div class="arch-filters">
+        <button class="arch-filter-btn active" id="af-all"   onclick="setArchFilter('all')">All</button>
+        <button class="arch-filter-btn"        id="af-cab"   onclick="setArchFilter('cab')">🪚 Cabinet</button>
+        <button class="arch-filter-btn"        id="af-stone" onclick="setArchFilter('stone')">🪨 Stone</button>
+        <input class="arch-search" id="archSearch" placeholder="🔍  Search archived projects…" oninput="renderArchive()">
+        <span class="arch-count" id="archCount"></span>
+      </div>
+      <div id="archGrid"></div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS VIEW -->
+  <div class="view" id="view-notifications">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Email Notifications</div>
+        <div class="page-sub">Automated alerts — matt@, arron@ &amp; reece@challengecabinets.com.au</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-red btn-sm" onclick="openOv('ov-sendEmail')">📧 Manual Send</button>
+      </div>
+    </div>
+    <div class="notif-page">
+      <div class="notif-grid">
+        <div>
+          <div class="rps-lbl">Notification Log</div>
+          <div id="notifList"></div>
+        </div>
+        <div>
+          <div class="right-panel-section">
+            <div class="rps-lbl">Recipients</div>
+            <div class="recip-card">
+              <div class="recip-hdr">Challenge Cabinets — Notification Contacts</div>
+              <div class="recip-row">
+                <div class="recip-avatar">M</div>
+                <div><div class="recip-name">Matt</div><div class="recip-email">matt@challengecabinets.com.au</div></div>
+                <div class="recip-badge">Project Manager</div>
+              </div>
+              <div class="recip-row">
+                <div class="recip-avatar">A</div>
+                <div><div class="recip-name">Arron</div><div class="recip-email">arron@challengecabinets.com.au</div></div>
+                <div class="recip-badge">Shop Floor</div>
+              </div>
+              <div class="recip-row">
+                <div class="recip-avatar" style="background:#5A7A5A;">R</div>
+                <div><div class="recip-name">Reece <span style="font-size:10.5px;font-weight:700;background:#EEF5EE;color:#2A6A2A;border:1px solid #80C080;padding:1px 7px;border-radius:10px;margin-left:6px;">Testing</span></div><div class="recip-email">reece@challengecabinets.com.au</div></div>
+                <div class="recip-badge" style="background:#EEF5EE;color:#2A6A2A;border:1px solid #80C080;">Test Contact</div>
+              </div>
+            </div>
+          </div>
+          <div class="right-panel-section">
+            <div class="rps-lbl">Trigger Rules</div>
+            <div class="trigger-panel" id="trigPanel"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══ MODALS ══ -->
+
+<!-- New Project -->
+<div class="overlay" id="ov-newProj">
+  <div class="modal">
+    <div class="modal-title" id="modal-proj-title">New Cabinet Project</div>
+    <div class="f2">
+      <div class="fg"><label class="fl">Project Name</label><input class="fi" id="np-name" placeholder="e.g. Smith Kitchen Reno"></div>
+      <div class="fg"><label class="fl">Due Date</label><input class="fi" id="np-due" type="date"></div>
+    </div>
+    <div class="fg"><label class="fl">Contact / Project Manager</label><input class="fi" id="np-pm" placeholder="Name"></div>
+    <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="np-notes" placeholder="Special requirements, site details..."></textarea></div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeOv('ov-newProj')">Cancel</button>
+      <button class="btn btn-red" onclick="createProject()">Create Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- Archive confirm -->
+<div class="overlay" id="ov-confirmArchive">
+  <div class="modal">
+    <div class="confirm-icon">🗂</div>
+    <div class="modal-title">Archive this project?</div>
+    <div class="modal-sub" id="ca-sub">The project will be moved to the Archive Library. You can restore it at any time.</div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeOv('ov-confirmArchive')">Cancel</button>
+      <button class="btn btn-amber" onclick="confirmArchive()">🗂 Archive Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirm -->
+<div class="overlay" id="ov-confirmDelete">
+  <div class="modal modal-danger">
+    <div class="confirm-icon">🗑</div>
+    <div class="modal-title">Permanently delete?</div>
+    <div class="modal-sub" id="cd-sub">This action cannot be undone. The project and all checklist data will be permanently removed.</div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeOv('ov-confirmDelete')">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">🗑 Delete Permanently</button>
+    </div>
+  </div>
+</div>
+
+<!-- Send Email -->
+<div class="overlay" id="ov-sendEmail">
+  <div class="modal">
+    <div class="modal-title">Send Notification Email</div>
+    <div class="fg">
+      <label class="fl">To</label>
+      <select class="fs" id="se-recip">
+        <option value="both">Matt &amp; Arron (matt@ + arron@challengecabinets.com.au)</option>
+        <option value="all">All three — Matt, Arron &amp; Reece</option>
+        <option value="matt">Matt only (matt@challengecabinets.com.au)</option>
+        <option value="arron">Arron only (arron@challengecabinets.com.au)</option>
+        <option value="reece">Reece only — Testing (reece@challengecabinets.com.au)</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">Project</label><select class="fs" id="se-proj"></select></div>
+    <div class="fg"><label class="fl">Subject</label><input class="fi" id="se-subj" placeholder="Email subject..."></div>
+    <div class="fg"><label class="fl">Message</label><textarea class="fta" id="se-msg" style="min-height:110px;" placeholder="Message body..."></textarea></div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeOv('ov-sendEmail')">Cancel</button>
+      <button class="btn btn-red" onclick="sendEmail()">📧 Send Email</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-zone" id="toastZone"></div>
+
+<script>
+// ════════════════════════════════════════
+// API LAYER — all data lives on the server
+// ════════════════════════════════════════
+const API = '/api';
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  if (!r.ok) { const e = await r.json().catch(()=>({error:r.statusText})); throw new Error(e.error||r.statusText); }
+  return r.json();
+}
+const get  = (p)      => api('GET',    p);
+const post = (p, b)   => api('POST',   p, b);
+const patch= (p, b)   => api('PATCH',  p, b);
+const del  = (p)      => api('DELETE', p);
+
+// ════════════════════════════════════════
+// CABINET STAGES
+// ════════════════════════════════════════
+const CAB_STAGES = [
+  { id:'drafting', label:'Drafting', emoji:'📐', hdr:'hdr-1', tasks:[
+    {text:'Cabinets Correct (Tongues, Finished ends, Service Holes)', tags:['crit']},
+    {text:'Colors Correct'},{text:'Runners & Hinges Correct (depth & clashing)'},
+    {text:'Lighting (striplight, downlights)'},{text:'Substrate or Templates',dn:'N/A'},
+    {text:'Approval Requested (shop drawings only)'},{text:'Bottom Panels (into windows, fingerpulls)'},
+    {text:'Kickers & Pelmets'},{text:'Cabinet Splits'},{text:'Internal Drawer (separate end for clearance)'},
+    {text:'Rangehood Internals (cover panels)'},{text:'Grain Matching of Doors'},
+    {text:'Check Appliances & Sanitary'},{text:'Cabinet Feet positioning (pantry & island backs)'},
+  ]},
+  { id:'optimising', label:'Optimising', emoji:'⚙️', hdr:'hdr-2', tasks:[
+    {text:'Sheet Colors Correct'},{text:'Grain Matching'},
+    {text:'Sheet Orientation and Layout (Single sided board for holes)'},
+    {text:'Mark Off on System'},{text:'Upload Plans'},
+    {text:'Notify Supervisors of plan changes, plumbing etc',tags:['notify'],notify:true},
+  ]},
+  { id:'hardware', label:'Hardware', emoji:'🔩', hdr:'hdr-3', tasks:[
+    {text:'Drawer Runners',dn:'450mm–500mm Alto Slims stock / 350mm–470mm Atira Stock'},
+    {text:'Handles'},{text:'Additional Hardware (hampers, pullouts etc)'},
+    {text:'Custom Hardware (Fridge Handles, Handles, Hanging Rail)'},
+    {text:'Cladding & Stecca'},{text:'Steel Frames'},
+  ]},
+  { id:'doorsbench', label:'Door & Benchtop Orders', emoji:'🚪', hdr:'hdr-4', tasks:[
+    {text:'Face & Edge Profiles Correct',tags:['crit']},
+    {text:'Door Order Submitted',tags:['notify'],notify:true,dn:'Date Ordered:'},
+    {text:'Laminated Benchtop Plan Emailed',tags:['notify'],notify:true,dn:'Date Ordered:'},
+    {text:'Stone Benchtop Template Booked',dn:'Date Booked:'},
+    {text:'Benchtop Edge Profile Confirmed',tags:['crit']},
+  ]},
+  { id:'renders', label:'Renders & Finishes', emoji:'🎨', hdr:'hdr-5', tasks:[
+    {text:'3D Render / Photomontage brief confirmed',tags:['notify'],notify:true},
+    {text:'Material textures & colours applied to model'},
+    {text:'Draft renders reviewed and approved'},
+    {text:'Final renders exported (high-res PNG & PDF)',tags:['crit']},
+    {text:'Colour codes documented (Dulux / Taubmans / RAL)',tags:['crit']},
+    {text:'Finishing schedule issued to painter / shop',tags:['notify'],notify:true},
+  ]},
+];
+
+// ════════════════════════════════════════
+// STONE STAGES
+// ════════════════════════════════════════
+const STONE_STAGES = [
+  { id:'stone-design', label:'Design & Templating', emoji:'📏', hdr:'hdr-1', tasks:[
+    {text:'Site template booked & confirmed with client',tags:['crit']},
+    {text:'Template drawn / laser measured on site'},
+    {text:'Edge profile selected & confirmed',tags:['crit']},
+    {text:'Stone slab selection confirmed with client'},
+    {text:'Colour & finish approved (matt / polished / leathered)'},
+    {text:'Cutouts confirmed (sink, cooktop, tap holes)',tags:['crit']},
+    {text:'Splashback design confirmed'},{text:'Overhang dimensions checked & noted'},
+    {text:'Shop drawings issued for approval',tags:['notify'],notify:true},
+  ]},
+  { id:'stone-material', label:'Slab & Material Check', emoji:'🪨', hdr:'hdr-2', tasks:[
+    {text:'Slab ordered from supplier',tags:['notify'],notify:true},
+    {text:'Slab received & inspected (no chips, veining match)'},
+    {text:'Slab dimensions checked against template',tags:['crit']},
+    {text:'Grain / vein direction confirmed for layout'},
+    {text:'Bookmatch layout marked if required'},
+    {text:'Off-cuts allocated / waste minimised'},
+  ]},
+  { id:'stone-fabrication', label:'Fabrication', emoji:'⚙️', hdr:'hdr-3', tasks:[
+    {text:'CNC / waterjet cut to template',tags:['crit']},
+    {text:'Edge profile machined & hand-finished'},
+    {text:'Sink & cooktop cutouts completed',tags:['crit']},
+    {text:'Tap holes drilled to correct diameter'},
+    {text:'Splashback panels cut & profiled'},
+    {text:'All pieces labelled and matched to job'},
+    {text:'Quality inspection — no chips, scratches or voids',tags:['crit']},
+    {text:'Sealer applied if required'},
+  ]},
+  { id:'stone-install', label:'Installation', emoji:'🏗️', hdr:'hdr-4', tasks:[
+    {text:'Install date confirmed with client & trades',tags:['notify'],notify:true},
+    {text:'Cabinet substrate checked — level & plumb',tags:['crit']},
+    {text:'Benchtop set on adhesive & checked for level'},
+    {text:'Joints tight, grouted & polished'},
+    {text:'Sink undermounted / drop-in fitted'},
+    {text:'Splashback installed & siliconed'},
+    {text:'All silicone joints neat & consistent'},
+    {text:'Final clean & polish completed'},
+    {text:'Client walkthrough & sign-off',tags:['crit','notify'],notify:true},
+  ]},
+  { id:'stone-handover', label:'Handover & Documentation', emoji:'📋', hdr:'hdr-5', tasks:[
+    {text:'Care & maintenance guide issued to client'},
+    {text:'Warranty documentation completed'},
+    {text:'Photos taken for portfolio / records'},
+    {text:'Job card closed off in system',tags:['notify'],notify:true},
+    {text:'Any defects noted and rectification scheduled'},
+  ]},
+];
+
+const RECIPIENTS = {
+  matt: 'matt@challengecabinets.com.au',
+  arron:'arron@challengecabinets.com.au',
+  reece:'reece@challengecabinets.com.au',
+};
+
+// ════════════════════════════════════════
+// CLIENT-SIDE DATA CACHE (loaded from API)
+// ════════════════════════════════════════
+const DB = { cab:{ projects:[], triggers:[] }, stone:{ projects:[], triggers:[] }, archive:[], notifications:[] };
+
+// ════════════════════════════════════════
+// CHECKLIST BUILDER (used when creating new projects)
+// ════════════════════════════════════════
+function makeChecklist(stages){
+  const cl={};
+  stages.forEach(s=>{
+    cl[s.id]=s.tasks.map((t,i)=>({
+      id:`${s.id}-${i}`,text:t.text,tags:t.tags||[],notify:!!t.notify,note:t.dn||'',status:'no',
+    }));
+  });
+  return cl;
+}
+
+// ════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════
+let activeCL   = 'cab';
+let activeProj = null;
+let archFilter = 'all';
+const openSec  = {};
+let pendingArchiveId = null;
+let pendingDeleteId  = null;
+let pendingDeleteSrc = null;
+let saveTimer        = null;  // debounce checklist saves
+
+function currentStages(){ return activeCL==='cab'?CAB_STAGES:STONE_STAGES; }
+function currentData()  { return DB[activeCL]; }
+function currentProj()  { return currentData().projects.find(x=>x.id===activeProj); }
+
+// ════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════
+function pct(p, stages){
+  let d=0,t=0;
+  stages.forEach(s=>{ const it=p.checklist[s.id]||[]; t+=it.length; d+=it.filter(i=>i.status==='done').length; });
+  return t?Math.round(d/t*100):0;
+}
+function stagePct(p,sid){ const it=p.checklist[sid]||[]; return it.length?Math.round(it.filter(i=>i.status==='done').length/it.length*100):0; }
+function fmtDate(d){ return d?new Date(d+'T00:00:00').toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'numeric'}):'—'; }
+function recipLabel(w){ return w==='matt'?'📩 Matt':w==='arron'?'📩 Arron':'📩 Reece (Test)'; }
+function stagesFor(type){ return type==='cab'?CAB_STAGES:STONE_STAGES; }
+
+// Debounced save — avoids hammering the API on every keystroke
+function scheduleSave(pid){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>saveChecklist(pid), 800);
+}
+
+async function saveChecklist(pid){
+  const p = currentData().projects.find(x=>x.id===pid);
+  if(!p) return;
+  try {
+    await patch(`/projects/${pid}`, { checklist: p.checklist });
+  } catch(e) {
+    toast('⚠️', 'Auto-save failed — check connection');
+  }
+}
+
+// ════════════════════════════════════════
+// DATA LOADING
+// ════════════════════════════════════════
+async function loadAll(){
+  try {
+    const [cabProj, stoneProj, archProj, cabTrig, stoneTrig, notifs] = await Promise.all([
+      get('/projects?type=cab&status=active'),
+      get('/projects?type=stone&status=active'),
+      get('/projects?status=archived'),
+      get('/triggers?type=cab'),
+      get('/triggers?type=stone'),
+      get('/notifications'),
+    ]);
+    DB.cab.projects   = cabProj;
+    DB.stone.projects = stoneProj;
+    DB.archive        = archProj;
+    DB.cab.triggers   = cabTrig;
+    DB.stone.triggers = stoneTrig;
+    DB.notifications  = notifs.map(n=>({...n, time:n.time_label}));
+    if(!activeProj) activeProj = DB[activeCL].projects[0]?.id ?? null;
+  } catch(e) {
+    toast('⚠️', 'Could not connect to server — check it is running');
+  }
+  render();
+}
+
+// ════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════
+function render(){
+  renderSidebar(); renderKPIs(); renderBanner(); renderStages();
+  renderNotifs(); renderTriggers(); renderArchive(); populateSel(); updateArchBadge();
+}
+
+function updateArchBadge(){
+  const b=document.getElementById('archBadge');
+  b.textContent=DB.archive.length;
+  b.style.display=DB.archive.length?'':'none';
+}
+
+function renderSidebar(){
+  const stages=currentStages();
+  document.getElementById('projList').innerHTML=currentData().projects.map(p=>`
+    <div class="proj-item ${p.id===activeProj?'active':''}" onclick="setProj(${p.id})">
+      <div class="proj-item-name">${p.name}</div>
+      <div class="proj-item-sub">${p.pm} · Due ${fmtDate(p.due)}</div>
+      <div class="proj-bar"><div class="proj-bar-fill" style="width:${pct(p,stages)}%"></div></div>
+      <div class="proj-actions">
+        <button class="proj-act-btn btn-arch-sm" title="Archive project" onclick="event.stopPropagation();promptArchive(${p.id})">🗂</button>
+        <button class="proj-act-btn btn-del-sm"  title="Delete project"  onclick="event.stopPropagation();promptDelete(${p.id},'active')">🗑</button>
+      </div>
+    </div>`).join('')
+    || '<div style="padding:14px 12px;font-size:12.5px;color:rgba(255,255,255,.3);font-style:italic;">No active projects</div>';
+  document.getElementById('projSectionLbl').textContent = activeCL==='cab'?'Cabinet Projects':'Stone Projects';
+  document.getElementById('modal-proj-title').textContent = activeCL==='cab'?'New Cabinet Project':'New Stone Project';
+}
+
+function renderKPIs(){
+  const stages=currentStages();
+  const active=currentData().projects.length;
+  const avgP=active?Math.round(currentData().projects.reduce((s,p)=>s+pct(p,stages),0)/active):0;
+  const archived=DB.archive.filter(a=>a.type===activeCL).length;
+  document.getElementById('kpiRow').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Active Projects</div><div class="kpi-value">${active}</div><div class="kpi-note">In progress</div></div>
+    <div class="kpi-card"><div class="kpi-label">Avg. Completion</div><div class="kpi-value">${avgP}%</div><div class="kpi-note">All active</div></div>
+    <div class="kpi-card"><div class="kpi-label">Archived</div><div class="kpi-value">${archived}</div><div class="kpi-note">${activeCL==='cab'?'Cabinet':'Stone'} jobs</div></div>`;
+}
+
+function renderBanner(){
+  const p=currentProj(); if(!p){
+    document.getElementById('projBanner').innerHTML='<div style="color:var(--text-3);font-size:14px;padding:4px 0;">No active project selected.</div>';
+    return;
+  }
+  const stages=currentStages();
+  document.getElementById('projBanner').innerHTML=`
+    <div style="flex:1;">
+      <div class="pb-name">${p.name}</div>
+      <div class="pb-meta">
+        <div><div class="pb-key">Contact</div><div class="pb-val">${p.pm}</div></div>
+        <div><div class="pb-key">Due Date</div><div class="pb-val">${fmtDate(p.due)}</div></div>
+        <div><div class="pb-key">Status</div><div class="pb-val"><span class="status s-active">Active</span></div></div>
+        ${p.notes?`<div><div class="pb-key">Notes</div><div class="pb-val">${p.notes}</div></div>`:''}
+      </div>
+    </div>
+    <div class="pb-right">
+      <div>
+        <div class="pb-pct-num">${pct(p,stages)}%</div>
+        <div class="pb-pct-lbl">Complete</div>
+      </div>
+      <div class="pb-btn-row">
+        <button class="btn btn-ghost btn-sm" onclick="promptArchive(${p.id})">🗂 Archive</button>
+        <button class="btn btn-danger btn-sm" onclick="promptDelete(${p.id},'active')">🗑 Delete</button>
+      </div>
+    </div>`;
+}
+
+function renderStages(){
+  const p=currentProj(); if(!p){
+    document.getElementById('stageArea').innerHTML='';
+    return;
+  }
+  const stages=currentStages();
+  stages.forEach(s=>{ if(openSec[s.id]===undefined) openSec[s.id]=true; });
+  document.getElementById('stageArea').innerHTML=stages.map(s=>{
+    const items=p.checklist[s.id]||[];
+    const done=items.filter(i=>i.status==='done').length;
+    const sp=stagePct(p,s.id);
+    const isOpen=openSec[s.id];
+    return `
+      <div class="stage-block">
+        <div class="stage-hdr ${s.hdr} ${isOpen?'open':''}" onclick="toggleSec('${s.id}')">
+          <div class="stage-hdr-left"><span class="stage-hdr-emoji">${s.emoji}</span><span class="stage-hdr-name">${s.label}</span></div>
+          <div class="stage-hdr-right"><span class="stage-hdr-count">${done} / ${items.length} complete</span><span class="stage-chevron">▼</span></div>
+        </div>
+        <div class="stage-body ${isOpen?'open':''}" id="sb-${s.id}">
+          <div class="col-hdr">
+            <div class="col-hdr-cell">Done</div>
+            <div class="col-hdr-cell">Task</div>
+            <div class="col-hdr-cell">Notes</div>
+          </div>
+          ${items.map((item,i)=>renderRow(p.id,s.id,item,i)).join('')}
+          <div class="stage-footer">
+            <button class="add-row-btn" onclick="addRow(${p.id},'${s.id}')">+ Add Row</button>
+            <div class="stage-prog-bar"><div class="stage-prog-fill" style="width:${sp}%"></div></div>
+            <span class="stage-prog-pct">${sp}%</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderRow(pid,sid,item,idx){
+  const selCls=item.status==='done'?'sel-done':item.status==='na'?'sel-na':'sel-no';
+  const tagH=[...new Set(item.tags||[])].map(t=>{
+    if(t==='crit')   return `<span class="ci-task-tag tag-crit">Critical</span>`;
+    if(t==='notify') return `<span class="ci-task-tag tag-notify">📧 Auto-notify</span>`;
+    return '';
+  }).join('');
+  return `
+    <div class="ci-row ${item.status==='done'?'row-done':''}" id="row-${pid}-${sid}-${idx}">
+      <div class="ci-status">
+        <select class="status-select ${selCls}" onchange="changeStatus(${pid},'${sid}',${idx},this)">
+          <option value="no"   ${item.status==='no'  ?'selected':''}>No</option>
+          <option value="done" ${item.status==='done'?'selected':''}>Done</option>
+          <option value="na"   ${item.status==='na'  ?'selected':''}>N/A</option>
+        </select>
+      </div>
+      <div class="ci-task"><div class="ci-task-text">${item.text}${tagH}</div></div>
+      <div class="ci-notes">
+        <input class="notes-input" value="${item.note||''}" placeholder="Add note…" oninput="updateNote(${pid},'${sid}',${idx},this.value)">
+        <button class="del-btn" onclick="delRow(${pid},'${sid}',${idx})">✕</button>
+      </div>
+    </div>`;
+}
+
+// ── ARCHIVE LIBRARY ──
+function setArchFilter(f){
+  archFilter=f;
+  ['all','cab','stone'].forEach(k=>document.getElementById('af-'+k).classList.toggle('active',k===f));
+  renderArchive();
+}
+
+function renderArchive(){
+  const search=(document.getElementById('archSearch')?.value||'').toLowerCase();
+  const items=DB.archive.filter(a=>{
+    if(archFilter!=='all' && a.type!==archFilter) return false;
+    if(search && !a.name.toLowerCase().includes(search) && !(a.pm||'').toLowerCase().includes(search)) return false;
+    return true;
+  });
+  document.getElementById('archCount').textContent=`${items.length} job${items.length!==1?'s':''}`;
+  if(!items.length){
+    document.getElementById('archGrid').innerHTML=`
+      <div class="empty-state">
+        <div class="empty-state-ico">🗂</div>
+        <div class="empty-state-txt">${DB.archive.length?'No results match your filter':'No archived projects yet'}</div>
+        <div class="empty-state-sub">${DB.archive.length?'Try changing the filter above':'Archive a project using the 🗂 button on any active project'}</div>
+      </div>`;
+    return;
+  }
+  document.getElementById('archGrid').innerHTML=`<div class="arch-grid">${items.map(a=>{
+    const stages=stagesFor(a.type);
+    const p=a.completion_pct!==undefined ? a.completion_pct : pct(a,stages);
+    const doneTasks=stages.reduce((sum,s)=>sum+(a.checklist[s.id]||[]).filter(i=>i.status==='done').length,0);
+    const totalTasks=stages.reduce((sum,s)=>sum+(a.checklist[s.id]||[]).length,0);
+    return `
+      <div class="arch-card">
+        <div class="arch-card-top">
+          <div class="arch-card-badge ${a.type==='cab'?'arch-badge-cab':'arch-badge-stone'}">${a.type==='cab'?'🪚 Cabinet':'🪨 Stone'}</div>
+          <div class="arch-card-name">${a.name}</div>
+          <div class="arch-card-pm">📋 ${a.pm||'—'}</div>
+        </div>
+        <div class="arch-card-bottom">
+          <div class="arch-meta">
+            <div class="arch-meta-item"><div class="arch-meta-k">Due</div><div class="arch-meta-v">${fmtDate(a.due)}</div></div>
+            <div class="arch-meta-item"><div class="arch-meta-k">Archived</div><div class="arch-meta-v">${a.archived_date||'—'}</div></div>
+            <div class="arch-meta-item"><div class="arch-meta-k">Tasks</div><div class="arch-meta-v">${doneTasks}/${totalTasks}</div></div>
+          </div>
+          <div style="text-align:center;">
+            <div class="arch-pct">${p}%</div>
+            <div class="arch-pct-lbl">Done</div>
+          </div>
+        </div>
+        ${a.notes?`<div class="arch-notes">${a.notes}</div>`:''}
+        <div class="arch-card-actions">
+          <button class="arch-restore-btn" onclick="restoreProject(${a.id})">↩ Restore to Active</button>
+          <button class="arch-del-btn" onclick="promptDelete(${a.id},'archive')">🗑 Delete</button>
+        </div>
+      </div>`;
+  }).join('')}</div>`;
+  updateArchBadge();
+}
+
+function renderNotifs(){
+  const pending=DB.notifications.filter(n=>n.type!=='sent').length;
+  const badge=document.getElementById('notifBadge');
+  badge.textContent=pending; badge.style.display=pending?'':'none';
+  document.getElementById('notifList').innerHTML=DB.notifications.map(n=>{
+    const ic=n.type==='sent'?'ico-sent':n.type==='pending'?'ico-pending':'ico-failed';
+    const bc=n.type==='sent'?'nb-sent':n.type==='pending'?'nb-pending':'nb-failed';
+    const bt=n.type==='sent'?'✓ Sent':n.type==='pending'?'⏳ Pending':'⚠ Failed';
+    return `<div class="notif-card">
+      <div class="notif-ico ${ic}">${n.emoji}</div>
+      <div style="flex:1"><div class="notif-title">${n.title}</div><div class="notif-detail">${n.detail}</div><div class="notif-time">${n.time||n.time_label}</div></div>
+      <div class="notif-badge ${bc}">${bt}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTriggers(){
+  const el=document.getElementById('trigPanel'); if(!el) return;
+  el.innerHTML=`<div class="trig-hdr-bar">${activeCL==='cab'?'Cabinet':'Stone'} Automation Rules</div>`
+    +currentData().triggers.map(t=>`
+      <div class="trig-row">
+        <div class="trig-body">
+          <div class="trig-lbl">${t.label}</div>
+          <div class="trig-who">${(t.who||[]).map(w=>`<span class="trig-tag ${w==='matt'?'tt-matt':w==='arron'?'tt-arron':'tt-reece'}">${recipLabel(w)}</span>`).join('')}</div>
+        </div>
+        <button class="toggle ${t.on?'on':''}" onclick="toggleTrig(${t.id})"></button>
+      </div>`).join('');
+}
+
+function populateSel(){
+  const el=document.getElementById('se-proj'); if(!el) return;
+  el.innerHTML=[...DB.cab.projects,...DB.stone.projects].map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+}
+
+// ════════════════════════════════════════
+// ARCHIVE / DELETE LOGIC (API-backed)
+// ════════════════════════════════════════
+function promptArchive(id){
+  pendingArchiveId=id;
+  const p=currentData().projects.find(x=>x.id===id);
+  document.getElementById('ca-sub').textContent=`"${p?.name}" will be moved to the Archive Library. You can restore it at any time.`;
+  openOv('ov-confirmArchive');
+}
+
+async function confirmArchive(){
+  const id=pendingArchiveId; pendingArchiveId=null;
+  const p=currentData().projects.find(x=>x.id===id); if(!p){closeOv('ov-confirmArchive');return;}
+  const stages=currentStages();
+  const completionPct=pct(p,stages);
+  try {
+    await post(`/projects/${id}/archive`, { completion_pct: completionPct });
+    DB[activeCL].projects = DB[activeCL].projects.filter(x=>x.id!==id);
+    if(activeProj===id) activeProj=currentData().projects[0]?.id??null;
+    // Reload archive list
+    DB.archive = await get('/projects?status=archived');
+    closeOv('ov-confirmArchive');
+    render();
+    toast('🗂',`"${p.name}" archived`);
+  } catch(e) {
+    toast('⚠️','Archive failed: '+e.message);
+    closeOv('ov-confirmArchive');
+  }
+}
+
+function promptDelete(id, src){
+  pendingDeleteId=id; pendingDeleteSrc=src;
+  let name='';
+  if(src==='active')  name=currentData().projects.find(x=>x.id===id)?.name||'';
+  if(src==='archive') name=DB.archive.find(x=>x.id===id)?.name||'';
+  document.getElementById('cd-sub').textContent=`"${name}" and all its checklist data will be permanently deleted. This cannot be undone.`;
+  openOv('ov-confirmDelete');
+}
+
+async function confirmDelete(){
+  const id=pendingDeleteId; const src=pendingDeleteSrc;
+  pendingDeleteId=null; pendingDeleteSrc=null;
+  let name='';
+  try {
+    if(src==='active'){
+      name=currentData().projects.find(x=>x.id===id)?.name||'';
+      await del(`/projects/${id}`);
+      DB[activeCL].projects=DB[activeCL].projects.filter(x=>x.id!==id);
+      if(activeProj===id) activeProj=currentData().projects[0]?.id??null;
+    } else {
+      name=DB.archive.find(x=>x.id===id)?.name||'';
+      await del(`/projects/${id}`);
+      DB.archive=DB.archive.filter(x=>x.id!==id);
+    }
+    closeOv('ov-confirmDelete');
+    render();
+    toast('🗑',`"${name}" deleted`);
+  } catch(e) {
+    toast('⚠️','Delete failed: '+e.message);
+    closeOv('ov-confirmDelete');
+  }
+}
+
+async function restoreProject(id){
+  const a=DB.archive.find(x=>x.id===id); if(!a) return;
+  try {
+    const restored = await post(`/projects/${id}/restore`, {});
+    DB.archive=DB.archive.filter(x=>x.id!==id);
+    DB[a.type].projects.push(restored);
+    if(activeCL!==a.type){ switchChecklist(a.type); return; }
+    activeProj=id;
+    render();
+    toast('↩',`"${a.name}" restored`);
+  } catch(e) {
+    toast('⚠️','Restore failed: '+e.message);
+  }
+}
+
+// ════════════════════════════════════════
+// CHECKLIST ACTIONS (auto-save to API)
+// ════════════════════════════════════════
+async function changeStatus(pid,sid,idx,sel){
+  const p=currentData().projects.find(x=>x.id===pid); if(!p) return;
+  const item=p.checklist[sid][idx];
+  const prev=item.status; item.status=sel.value;
+  sel.className=`status-select sel-${sel.value}`;
+  const row=document.getElementById(`row-${pid}-${sid}-${idx}`);
+  if(row) row.className=`ci-row ${sel.value==='done'?'row-done':''}`;
+
+  // Fire real email notification if notify-tagged item just got marked Done
+  if(sel.value==='done' && prev!=='done' && item.notify){
+    const trig=currentData().triggers.find(t=>t.on && t.label.toLowerCase().includes(item.text.toLowerCase().slice(0,20)));
+    const who = trig ? trig.who : ['matt','arron','reece'];
+    try {
+      await post('/notifications/send', {
+        recipients: who,
+        projectName: p.name,
+        milestone: item.text,
+        dueDate: fmtDate(p.due),
+        checklistType: activeCL,
+      });
+      // Reload notification log
+      const notifs = await get('/notifications');
+      DB.notifications = notifs.map(n=>({...n,time:n.time_label}));
+      renderNotifs();
+      toast('📧',`Email sent to ${who.map(w=>RECIPIENTS[w]).join(', ').slice(0,40)}…`);
+    } catch(e) {
+      toast('⚠️','Email failed: '+e.message);
+    }
+  }
+
+  renderSidebar(); renderKPIs(); renderBanner();
+  const sp=stagePct(p,sid);
+  const fill=document.querySelector(`#sb-${sid} .stage-prog-fill`);
+  const pctTxt=document.querySelector(`#sb-${sid} .stage-prog-pct`);
+  const hdrC=document.querySelector(`[onclick="toggleSec('${sid}')"] .stage-hdr-count`);
+  const items=p.checklist[sid]||[];
+  if(fill)  fill.style.width=sp+'%';
+  if(pctTxt)pctTxt.textContent=sp+'%';
+  if(hdrC)  hdrC.textContent=`${items.filter(i=>i.status==='done').length} / ${items.length} complete`;
+
+  scheduleSave(pid);
+}
+
+function updateNote(pid,sid,idx,val){
+  const p=currentData().projects.find(x=>x.id===pid); if(!p) return;
+  p.checklist[sid][idx].note=val;
+  scheduleSave(pid);
+}
+
+function delRow(pid,sid,idx){
+  const p=currentData().projects.find(x=>x.id===pid); if(!p) return;
+  p.checklist[sid].splice(idx,1);
+  renderStages();
+  scheduleSave(pid);
+}
+
+function addRow(pid,sid){
+  const text=prompt('New checklist item:'); if(!text) return;
+  const p=currentData().projects.find(x=>x.id===+pid); if(!p) return;
+  p.checklist[sid].push({id:Date.now(),text,tags:[],notify:false,note:'',status:'no'});
+  renderStages();
+  scheduleSave(pid);
+}
+
+function toggleSec(id){
+  openSec[id]=!openSec[id];
+  const hdr=document.querySelector(`[onclick="toggleSec('${id}')"]`);
+  const body=document.getElementById(`sb-${id}`);
+  if(hdr)  hdr.classList.toggle('open',openSec[id]);
+  if(body) body.classList.toggle('open',openSec[id]);
+}
+
+// ════════════════════════════════════════
+// NAV & UI
+// ════════════════════════════════════════
+async function switchChecklist(type){
+  activeCL=type;
+  activeProj=DB[type].projects[0]?.id??null;
+  currentStages().forEach(s=>{ if(openSec[s.id]===undefined) openSec[s.id]=true; });
+  document.getElementById('tab-cab').classList.toggle('active',type==='cab');
+  document.getElementById('tab-stone').classList.toggle('active',type==='stone');
+  document.getElementById('pageTitle').textContent=type==='cab'?'Cabinet Checklist':'Stone Checklist';
+  const pill=document.getElementById('clPill');
+  pill.textContent=type==='cab'?'🪚 Cabinet':'🪨 Stone';
+  pill.className=`cl-pill ${type==='cab'?'cl-pill-cab':'cl-pill-stone'}`;
+  render();
+}
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(`view-${name}`).classList.add('active');
+  ['checklist','archive','notifications'].forEach(n=>{
+    document.getElementById(`nav-${n}`)?.classList.toggle('active',n===name);
+  });
+  if(name==='notifications') renderTriggers();
+  if(name==='archive') renderArchive();
+}
+
+function setProj(id){ activeProj=id; renderSidebar(); renderKPIs(); renderBanner(); renderStages(); }
+
+async function toggleTrig(id){
+  const t=currentData().triggers.find(x=>x.id===id); if(!t) return;
+  t.on=!t.on;
+  renderTriggers();
+  try { await patch(`/triggers/${id}`, { on: t.on }); }
+  catch(e){ t.on=!t.on; renderTriggers(); toast('⚠️','Could not save trigger change'); }
+}
+
+function openOv(id){ document.getElementById(id).classList.add('open'); }
+function closeOv(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{ if(e.target===el)el.classList.remove('open'); }));
+
+async function createProject(){
+  const name=document.getElementById('np-name').value.trim();
+  if(!name){toast('⚠️','Project name is required');return;}
+  const stages=currentStages();
+  try {
+    const created = await post('/projects', {
+      type: activeCL,
+      name,
+      pm: document.getElementById('np-pm').value||'Unassigned',
+      due: document.getElementById('np-due').value||null,
+      notes: document.getElementById('np-notes').value||'',
+      checklist: makeChecklist(stages),
+    });
+    DB[activeCL].projects.push(created);
+    activeProj=created.id;
+    closeOv('ov-newProj');
+    render();
+    toast('✅',`Project "${name}" created`);
+    ['np-name','np-pm','np-due','np-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  } catch(e) {
+    toast('⚠️','Could not create project: '+e.message);
+  }
+}
+
+async function sendEmail(){
+  const recipVal=document.getElementById('se-recip').value;
+  const who = recipVal==='all'?['matt','arron','reece']:recipVal==='both'?['matt','arron']:[recipVal];
+  const subj=document.getElementById('se-subj').value||'Project Update';
+  const projId=document.getElementById('se-proj').value;
+  const proj=[...DB.cab.projects,...DB.stone.projects].find(p=>p.id==projId);
+  closeOv('ov-sendEmail');
+  try {
+    await post('/notifications/send', {
+      recipients: who,
+      subject: subj,
+      projectName: proj?.name||'',
+      milestone: document.getElementById('se-msg').value||subj,
+      checklistType: proj?.type||activeCL,
+    });
+    const notifs = await get('/notifications');
+    DB.notifications = notifs.map(n=>({...n,time:n.time_label}));
+    renderNotifs();
+    toast('📧',`Email sent to ${who.map(w=>RECIPIENTS[w]).join(', ').slice(0,40)}…`);
+  } catch(e) {
+    toast('⚠️','Email failed: '+e.message);
+  }
+}
+
+function toast(icon,msg){
+  const z=document.getElementById('toastZone');
+  const t=document.createElement('div'); t.className='toast';
+  t.innerHTML=`<span>${icon}</span><span>${msg}</span>`;
+  z.appendChild(t); setTimeout(()=>t.remove(),3500);
+}
+
+// ════════════════════════════════════════
+// INIT — load data from API on startup
+// ════════════════════════════════════════
+document.getElementById('dashDate').textContent=
+  new Date().toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+currentStages().forEach(s=>openSec[s.id]=true);
+loadAll();
+</script>
+</body>
+</html>
