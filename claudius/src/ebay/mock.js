@@ -74,6 +74,10 @@ export function createMockStore() {
       return load().listings.map(pub);
     },
 
+    async migrateListings(listingIds) {
+      return listingIds.map((listingId) => ({ listingId, ok: true, skus: [`MOCK-${listingId}`], errors: [] }));
+    },
+
     async getListing(sku) {
       return pub(find(sku));
     },

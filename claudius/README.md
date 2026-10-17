@@ -77,7 +77,11 @@ EBAY_MARKETPLACE_ID=EBAY_AU
 Creating new listings also needs your business policy IDs and inventory location, all visible in Seller Hub: `EBAY_FULFILLMENT_POLICY_ID`, `EBAY_PAYMENT_POLICY_ID`, `EBAY_RETURN_POLICY_ID`, `EBAY_LOCATION_KEY`.
 
 ### 4. Migrating existing listings
-eBay's Inventory API only sees listings created through it. Listings you made on ebay.com.au need a one-off migration, using eBay's `bulkMigrateListing` call (up to 5 listing IDs per call), so their price and copy can be managed by API. After migration, keep editing them through Claudius or Seller Hub, not the old listing form. Ask Claude Code to add a `migrate` command when you're ready.
+eBay's Inventory API only sees listings created through it, so listings you made on ebay.com.au need a one-off migration. Before migrating, make sure each listing has a Custom label (SKU) matching `claudius.config.json`, uses business policies, and is fixed price (auctions can't migrate). Then run:
+```bash
+node src/index.js migrate 123456789012 223456789012   # listing IDs from ebay.com.au/itm/<id>
+```
+Migration can't be undone, so try one listing first.
 
 ### 5. First live run
 ```bash
@@ -100,7 +104,7 @@ The `data/` folder is Claudius's memory, so run it somewhere with a persistent d
 
 ```
 src/
-├── index.js        CLI: run | chat | daemon | status
+├── index.js        CLI: run | chat | daemon | status | migrate
 ├── agent.js        Claude agent loop (Claude Opus 5.5, adaptive thinking, prompt caching)
 ├── prompt.js       Claudius's role, routine and principles
 ├── tools.js        13 tools + guardrail checks in front of every write
@@ -116,7 +120,6 @@ src/
 - **Status:** the mock store and guardrails are tested. The live eBay client follows eBay's documented APIs but has not run against a real account yet. Use sandbox mode and `--dry-run` first.
 
 ## Ideas for next steps
-- A `migrate` command for existing listings
 - Emailing the run report and urgent escalations (Gmail or SMTP)
 - Posting social drafts automatically (Meta Graph API)
 - Generating listing photos and lifestyle images from your product shots

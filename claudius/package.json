@@ -10,6 +10,7 @@
     "chat": "node src/index.js chat",
     "daemon": "node src/index.js daemon",
     "status": "node src/index.js status",
+    "migrate": "node src/index.js migrate",
     "test": "node --test test/*.test.js"
   },
   "dependencies": {

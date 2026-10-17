@@ -142,6 +142,25 @@ export function createLiveStore({ mode, env = process.env }) {
       return out;
     },
 
+    // One-off: convert listings made on ebay.com.au into Inventory API listings.
+    async migrateListings(listingIds) {
+      const results = [];
+      for (let i = 0; i < listingIds.length; i += 5) {
+        const { json } = await rest('POST', '/sell/inventory/v1/bulk_migrate_listing', {
+          body: { requests: listingIds.slice(i, i + 5).map((listingId) => ({ listingId })) },
+        });
+        for (const r of json.responses || []) {
+          results.push({
+            listingId: r.listingId,
+            ok: r.statusCode === 200,
+            skus: r.inventoryItems?.map((it) => it.sku) || [],
+            errors: r.errors?.map((e) => e.longMessage || e.message) || [],
+          });
+        }
+      }
+      return results;
+    },
+
     async getListing(sku) {
       const { json: item } = await rest('GET', `/sell/inventory/v1/inventory_item/${encodeURIComponent(sku)}`);
       const listing = toListing({ ...item, sku }, await offerFor(sku));

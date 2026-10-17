@@ -4,6 +4,7 @@
 //   node src/index.js chat [--dry-run]                 talk to Claudius / give instructions
 //   node src/index.js daemon                           run a cycle every CLAUDIUS_INTERVAL_HOURS
 //   node src/index.js status                           recent actions and open escalations
+//   node src/index.js migrate <listingId> [...]        one-off: bring ebay.com.au listings into the API
 import 'dotenv/config';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -122,9 +123,23 @@ function status() {
   if (fs.existsSync(esc)) console.log(`\nEscalations for you: ${path.relative(process.cwd(), esc)}`);
 }
 
-const commands = { run: () => runOnce(), chat, daemon, status };
+async function migrate() {
+  const ids = args.slice(1).filter((a) => /^\d+$/.test(a) || a.startsWith('MOCK'));
+  if (!ids.length) {
+    console.error('Usage: node src/index.js migrate <listingId> [listingId ...]\nFind listing IDs in each listing URL: ebay.com.au/itm/<listingId>');
+    process.exit(1);
+  }
+  const results = await createStore().migrateListings(ids);
+  for (const r of results) {
+    console.log(r.ok ? `✓ ${r.listingId} → SKU ${r.skus.join(', ')}` : `✗ ${r.listingId}: ${r.errors.join('; ')}`);
+  }
+  const failed = results.filter((r) => !r.ok).length;
+  console.log(`\n${results.length - failed} migrated, ${failed} failed.`);
+}
+
+const commands = { run: () => runOnce(), chat, daemon, status, migrate };
 if (!commands[command]) {
-  console.error(`Unknown command "${command}". Use: run | chat | daemon | status`);
+  console.error(`Unknown command "${command}". Use: run | chat | daemon | status | migrate`);
   process.exit(1);
 }
 await commands[command]();
