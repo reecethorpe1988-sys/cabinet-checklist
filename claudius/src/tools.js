@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import * as guard from './guardrails.js';
 import {
-  ROOT, today, logAction, escalate, appendNote, recordBaseline, startOfDayPrice, saveState,
+  ROOT, today, logAction, escalate, appendNote, recordBaseline, startOfDayPrice, saveState, writeCatalog,
 } from './state.js';
 
 const str = (description) => ({ type: 'string', description });
@@ -86,7 +86,7 @@ export const TOOLS = [
   },
   {
     name: 'draft_social_post',
-    description: 'Write a social media post promoting the store or a listing. Saved to the outbox for the owner to post (Claudius does not have social accounts).',
+    description: 'Write a social media post idea promoting the store or a listing. Saved to the outbox, where Iris (the Instagram agent) picks it up to polish and schedule, or the owner posts it.',
     input_schema: obj({
       platform: { type: 'string', enum: ['instagram', 'facebook', 'tiktok', 'reddit'], description: 'Target platform' },
       sku: str('SKU featured, or "" for the whole store'),
@@ -148,6 +148,7 @@ export async function executeTool(name, input, ctx) {
       const trafficBySku = Array.isArray(traffic) ? Object.fromEntries(traffic.map((t) => [t.sku, t])) : {};
       for (const l of listings) recordBaseline(state, l.sku, l.price);
       saveState(state);
+      writeCatalog(listings, promotions);
       return {
         mode: store.mode,
         date: today(),

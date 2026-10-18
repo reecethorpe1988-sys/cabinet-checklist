@@ -65,7 +65,12 @@ export function createMockStore() {
     if (!item) throw new Error(`No listing with SKU ${sku}`);
     return item;
   };
-  const pub = ({ stats, ...rest }) => rest;
+  // Placeholder photo URLs so downstream tools (e.g. the Instagram agent) have something to reference.
+  const pub = ({ stats, ...rest }) => ({
+    imageUrls: [`https://example.com/mock-photos/${rest.sku}.jpg`],
+    url: `https://www.ebay.com.au/itm/${rest.listingId}`,
+    ...rest,
+  });
 
   return {
     mode: 'mock',

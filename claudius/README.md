@@ -8,7 +8,7 @@ On every run, Claudius:
 2. **Answers buyer questions** in the store's voice. Refunds, damage, disputes and anything legal go to you instead.
 3. **Optimises listings.** It rewrites titles that get impressions but no clicks, and checks competitor prices before changing its own.
 4. **Runs promotions.** It sets up short markdown sales on slow stock and Promoted Listings (cost-per-sale) on items that already convert.
-5. **Drafts social posts** (Instagram, Facebook, TikTok, Reddit) into `outbox/` for you to post.
+5. **Drafts social posts** (Instagram, Facebook, TikTok, Reddit) into `outbox/`. [Iris](../iris), the Instagram agent, picks these up, along with the catalog Claudius saves to `data/catalog.json`.
 6. **Learns.** It saves notes on what worked, and future runs read those notes.
 7. **Reports.** It writes a report to `reports/`, and every action goes to an audit log.
 
@@ -121,6 +121,5 @@ src/
 
 ## Ideas for next steps
 - Emailing the run report and urgent escalations (Gmail or SMTP)
-- Posting social drafts automatically (Meta Graph API)
 - Generating listing photos and lifestyle images from your product shots
 - Tracking each experiment's before and after conversion automatically

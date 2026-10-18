@@ -1,0 +1,9 @@
+node_modules/
+.env
+data/*
+!data/.gitkeep
+photos/*
+!photos/.gitkeep
+outbox/
+marketplace.json
+STOP

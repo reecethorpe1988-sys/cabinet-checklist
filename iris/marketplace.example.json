@@ -1,0 +1,20 @@
+[
+  {
+    "id": "fbm-oosh-stand-pink",
+    "title": "Ooshies Display Stand (holds 42), pink",
+    "price": 15,
+    "condition": "New",
+    "photos": ["oosh-stand-pink.jpg"],
+    "status": "available",
+    "notes": "Local pickup or meet nearby. One left in pink."
+  },
+  {
+    "id": "fbm-misprint-bundle",
+    "title": "Bundle of 5 misprinted plant pots (small cosmetic flaws)",
+    "price": 10,
+    "condition": "Used - Good",
+    "photos": ["misprint-pots.jpg"],
+    "status": "available",
+    "notes": "Seconds from the workshop. Fully usable."
+  }
+]

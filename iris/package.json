@@ -1,0 +1,24 @@
+{
+  "name": "iris",
+  "version": "0.1.0",
+  "description": "Iris: an AI agent that runs Instagram for the rt3d-bbz store, promoting new products, eBay sales and Facebook Marketplace items",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": { "iris": "src/index.js" },
+  "scripts": {
+    "plan": "node src/index.js plan",
+    "queue": "node src/index.js queue",
+    "publish": "node src/index.js publish",
+    "chat": "node src/index.js chat",
+    "daemon": "node src/index.js daemon",
+    "status": "node src/index.js status",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
+    "dotenv": "^18.0.8"
+  },
+  "engines": { "node": ">=20.0.0" },
+  "license": "UNLICENSED",
+  "private": true
+}

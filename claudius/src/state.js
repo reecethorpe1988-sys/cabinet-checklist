@@ -85,3 +85,15 @@ export function appendNote(note) {
   ensureDir();
   fs.appendFileSync(NOTES_FILE(), `- ${today()}: ${note.trim()}\n`);
 }
+
+// A snapshot of the store's listings for other agents (e.g. the Instagram
+// agent) to read without needing their own eBay access.
+export function writeCatalog(listings, promotions) {
+  ensureDir();
+  fs.writeFileSync(path.join(DATA_DIR, 'catalog.json'), JSON.stringify({
+    updatedAt: new Date().toISOString(),
+    listings: listings.map(({ sku, title, price, quantity, url, imageUrls, description }) =>
+      ({ sku, title, price, quantity, url, imageUrls, description })),
+    promotions: Array.isArray(promotions) ? promotions : [],
+  }, null, 2));
+}

@@ -111,6 +111,8 @@ export function createLiveStore({ mode, env = process.env }) {
       description: offer?.listingDescription || item.product?.description,
       price: Number(offer?.pricingSummary?.price?.value),
       quantity: item.availability?.shipToLocationAvailability?.quantity,
+      imageUrls: item.product?.imageUrls || [],
+      url: offer?.listing?.listingId ? `https://www.ebay.com.au/itm/${offer.listing.listingId}` : undefined,
       categoryId: offer?.categoryId,
       status: offer?.status,
     };
