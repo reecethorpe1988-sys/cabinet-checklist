@@ -1,0 +1,44 @@
+{
+  "store": {
+    "name": "rt3d-bbz",
+    "url": "https://www.ebay.com.au/str/rt3dbbz",
+    "marketplace": "EBAY_AU",
+    "currency": "AUD",
+    "country": "Australia",
+    "niche": "3D-printed accessories, display stands, home & garden decor, plus trading cards",
+    "voice": "Friendly, upbeat, Aussie small-maker. Plain English, no hype, no ALL CAPS, no emoji spam."
+  },
+
+  "guardrails": {
+    "absoluteMinPrice": 3.0,
+    "minMarginPct": 40,
+    "maxDropBelowBaselinePct": 30,
+    "maxPriceChangePctPerDay": 15,
+    "maxPriceChangesPerRun": 10,
+    "maxDiscountPct": 25,
+    "maxPromotionDays": 14,
+    "maxAdRatePct": 6,
+    "maxListingsCreatedPerRun": 3,
+    "maxBuyerRepliesPerRun": 25,
+    "allowRefundsOrMoneyPromises": false,
+    "escalationKeywords": [
+      "refund", "return", "broken", "damaged", "not received", "never arrived",
+      "chargeback", "paypal dispute", "open a case", "ebay case", "scam", "lawyer", "solicitor", "consumer law", "fair trading"
+    ],
+    "replyBlocklist": [
+      "refund", "free", "discount", "cash", "bank transfer", "payid", "outside ebay",
+      "my email", "my phone", "whatsapp", "guarantee"
+    ]
+  },
+
+  "products": {
+    "_comment": "Optional: unit cost per SKU (filament + electricity + packaging, AUD). With a cost, Claudius never prices below cost x (1 + minMarginPct). Without one, it never drops more than maxDropBelowBaselinePct below the first price it saw.",
+    "YETI-BOOT": { "cost": 3.2 },
+    "OOSH-STAND-42": { "cost": 4.5 },
+    "OOSH-LABEL": { "cost": 0.6 },
+    "PROP-STATION-3": { "cost": 7.0 },
+    "TREAD-BOTTLE": { "cost": 6.5 },
+    "HP-KNIT-FIG": { "cost": 9.0 },
+    "MONSTERA-COASTER": { "cost": 8.0 }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "brand": {
+    "name": "rt3d-bbz",
+    "instagramHandle": "@your_handle_here",
+    "ebayStoreUrl": "https://www.ebay.com.au/str/rt3dbbz",
+    "country": "Australia",
+    "pickupArea": "your suburb, NSW",
+    "voice": "Friendly, upbeat Aussie maker who loves 3D printing. Show the making, not just the selling. Plain English, a couple of emoji at most, no hype or ALL CAPS.",
+    "coreHashtags": ["#3dprinting", "#3dprinted", "#madeinaustralia", "#smallbusinessaustralia"]
+  },
+
+  "publishing": {
+    "autoPublish": false,
+    "timezone": "Australia/Sydney",
+    "postingSlots": ["11:30", "19:30"],
+    "maxPostsPerDay": 2,
+    "minHoursBetweenPosts": 4,
+    "maxQueuedPerRun": 5,
+    "maxDaysAhead": 14
+  },
+
+  "guardrails": {
+    "maxCaptionChars": 2200,
+    "maxHashtags": 15,
+    "bannedPhrases": [
+      "bank transfer", "payid", "crypto", "western union", "pay outside",
+      "official yeti", "yeti official", "licensed", "officially licensed",
+      "guaranteed", "100% safe", "best in australia", "cheapest"
+    ]
+  }
+}
